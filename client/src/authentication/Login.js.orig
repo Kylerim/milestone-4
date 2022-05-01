@@ -1,0 +1,100 @@
+import { useState, useEffect, useCallback } from 'react'
+import { Link } from "react-router-dom";
+import { endpointLogIn } from '../Common'
+
+
+async function loginUser(credentials) {
+  return fetch(endpointLogIn, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+<<<<<<< HEAD
+=======
+    credentials: 'include',
+
+>>>>>>> 742731ee052379360963070e057ec415389fd581
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+}
+
+async function loginUserWithSession() {
+<<<<<<< HEAD
+  return fetch(endpointLogInWithSession, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+=======
+  return fetch(endpointLogIn, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: ""
+>>>>>>> 742731ee052379360963070e057ec415389fd581
+  })
+    .then(data => data.json())
+}
+
+<<<<<<< HEAD
+function Login({ setAuth }) {
+=======
+function Login({ setAuth, isAuth }) {
+>>>>>>> 742731ee052379360963070e057ec415389fd581
+  const [username, setUserName] = useState();
+  const [password, setPassword] = useState();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const response = await loginUser({
+      username,
+      password
+    });
+    console.log(response.status);
+    setAuth(response.status == 'OK');
+  }
+
+  const checkSession = async () => {
+    const response = await loginUserWithSession();
+    console.log(response);
+    if (response.status == 'OK') { setAuth(response.status == 'OK'); }
+  }
+
+<<<<<<< HEAD
+
+  useEffect(() => {
+    checkSession();
+=======
+  useEffect(() => {
+    if (!isAuth) {
+      checkSession();
+    }
+>>>>>>> 742731ee052379360963070e057ec415389fd581
+  }, [])
+
+  return (
+    <div>
+      <p>Login Page</p>
+      <form onSubmit={handleSubmit}>
+        <label>
+          <p>Username</p>
+          <input type="text" onChange={e => setUserName(e.target.value)} />
+        </label>
+        <label>
+          <p>Password</p>
+          <input type="password" onChange={e => setPassword(e.target.value)} />
+        </label>
+        <div>
+          <button type="submit">Log In</button>
+        </div>
+        <Link to="/signup">Don't you have an account? Sign Up here</Link>
+      </form>
+    </div>
+
+  );
+}
+
+export default Login;
