@@ -10,7 +10,7 @@ const sharedbmongoose = require("sharedb-mongo");
 
 const PORT = 5555;
 
-const db = sharedbmongoose("mongodb://localhost:27017/milestone3", {
+const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

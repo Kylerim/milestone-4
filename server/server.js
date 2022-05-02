@@ -101,12 +101,20 @@ if (IS_PRODUCTION_MODE) {
 }
 
 //ShareDB Connection
-ShareDB.types.register(richText.type);
-let websocketServerDynamic =
-    parseInt(PORT) % 2 == 0 ? "ws://localhost:5555" : "ws://localhost:5556";
-const socket = new WebSocket(websocketServerDynamic);
-const connection = new ShareDB.Connection(socket);
+// ShareDB.types.register(richText.type);
+// let websocketServerDynamic =
+//     parseInt(PORT) % 2 == 0 ? "ws://localhost:5555" : "ws://localhost:5556";
+// const socket = new WebSocket(websocketServerDynamic);
+// const connection = new ShareDB.Connection(socket);
 
+const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+ShareDB.types.register(richText.type);
+const backend = new ShareDB({ presence: true, db });
+const connection = backend.connect();
 let docSessions = new Map();
 let names = new Map();
 
