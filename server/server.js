@@ -120,7 +120,7 @@ function sendBulkUpdate() {
             let doc = connection.get("documents", docId);
             const formatted = contentFormatter(docId, doc.data.ops);
             console.log("Formatteed", JSON.stringify(formatted));
-            toUpdate.push(formatted);
+            toUpdate.push(...formatted);
             docSession.isTouched = false;
         }
     });
