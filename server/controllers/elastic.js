@@ -37,10 +37,6 @@ exports.contentFormatter = function (id, delta) {
     ];
 };
 
-bulkQueue.error(function (err, task) {
-    console.error("task experienced an error", err, task);
-});
-
 const bulkQueueCallback = async function ({ operations }) {
     // const content = toPlaintext(delta);
     // const result = await client.update({
@@ -103,7 +99,9 @@ const queueCallback = async function ({ id, delta }) {
 const queue = async.queue(queueCallback, 3);
 
 const bulkQueue = async.queue(bulkQueueCallback, 3);
-
+bulkQueue.error(function (err, task) {
+    console.error("task experienced an error", err, task);
+});
 exports.createIndex = async function (id, title, content) {
     // console.log("elastic client id", elastic_id);
     const result = await client.index({
