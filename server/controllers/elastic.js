@@ -4,7 +4,7 @@ const QuillDeltaToHtmlConverter =
     require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 const async = require("async");
 const { v4: uuidv4 } = require("uuid");
-const id = uuidv4();
+const elastic_id = uuidv4();
 const { convert } = require("html-to-text");
 const client = new Client({
     node: "http://localhost:9200",
@@ -49,7 +49,7 @@ const queueCallback = async function ({ id, delta }, completed) {
 const queue = async.queue(queueCallback, 3);
 
 exports.createIndex = async function (id, title, content) {
-    console.log("elastic client id", id);
+    console.log("elastic client id", elastic_id);
     const result = await client.index({
         refresh: true,
         index: "documents",
