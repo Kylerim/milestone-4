@@ -355,7 +355,7 @@ function updateOpsQueue(request, response) {
 
     if (
         docSessions.has(docId) &&
-        Math.abs(version - docSessions.get(docId).elasticVersion) > 5
+        Math.abs(version - docSessions.get(docId).elasticVersion) > 20
     ) {
         console.log(
             "Version of elastic: ",
