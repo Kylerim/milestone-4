@@ -37,7 +37,11 @@ exports.contentFormatter = function (id, delta) {
     ];
 };
 
-const bulkQueueCallback = async function ({ operations }, completed) {
+bulkQueue.error(function (err, task) {
+    console.error("task experienced an error", err, task);
+});
+
+const bulkQueueCallback = async function ({ operations }) {
     // const content = toPlaintext(delta);
     // const result = await client.update({
     //     refresh: true,
@@ -56,15 +60,15 @@ const bulkQueueCallback = async function ({ operations }, completed) {
         refresh: true,
     });
 
-    if (result) {
-        completed(null, operations.length);
-    }
+    // if (result) {
+    //     completed(null, operations.length);
+    // }
     // } else {
     //     completed(result.errors, operations.length);
     // }
 };
 
-const queueCallback = async function ({ id, delta }, completed) {
+const queueCallback = async function ({ id, delta }) {
     let converter = new QuillDeltaToHtmlConverter(delta, {});
     let html = converter.convert();
     let content = convert(html, {
@@ -91,9 +95,9 @@ const queueCallback = async function ({ id, delta }, completed) {
             content: content,
         },
     });
-    if (result) {
-        completed(null, id);
-    }
+    // if (result) {
+    //     completed(null, id);
+    // }
 };
 
 const queue = async.queue(queueCallback, 3);
@@ -124,27 +128,29 @@ exports.deleteIndex = async function (id) {
 };
 
 exports.updateIndex = function (id, delta) {
-    queue.push({ id, delta }, (error, docid) => {
-        if (error) {
-            console.log(`An error occurred while processing task${error}`);
-        } else {
-            console.log(`Finished processing task ${docid}
-                   tasks remaining`);
-        }
-    });
+    queue.push({ id, delta });
+
+    //     (error, docid) => {
+    //     if (error) {
+    //         console.log(`An error occurred while processing task${error}`);
+    //     } else {
+    //         console.log(`Finished processing task ${docid}
+    //                tasks remaining`);
+    //     }
+    // });
 };
 
 exports.updateBulk = function (operations) {
-    const completed = (error, number) => {
-        if (error) {
-            console.log(`An error occurred while processing task ${error}`);
-        } else {
-            console.log(`Finished processing ${number} updates`);
-        }
-    };
+    // const completed = (error, number) => {
+    //     if (error) {
+    //         console.log(`An error occurred while processing task ${error}`);
+    //     } else {
+    //         console.log(`Finished processing ${number} updates`);
+    //     }
+    // };
     if (operations.length > 0) {
         console.log("update Bulk is called operations ", operations);
-        bulkQueue.push({ operations }, completed);
+        bulkQueue.push({ operations });
     }
 };
 
