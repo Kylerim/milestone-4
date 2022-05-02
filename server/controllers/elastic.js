@@ -6,7 +6,7 @@ const async = require("async");
 // const elastic_id = uuidv4();
 const { convert } = require("html-to-text");
 const client = new Client({
-    node: "http://localhost:9200",
+    node: "http://209.94.59.103:9200",
     auth: {
         username: "elastic",
         password: "kylerim123",
