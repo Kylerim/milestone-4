@@ -3,8 +3,7 @@ const { PROD_IP, ELASTIC_PORT, GROUP_ID, LOCAL_IP } = require("../common.js");
 const QuillDeltaToHtmlConverter =
     require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 const async = require("async");
-const { v4: uuidv4 } = require("uuid");
-const elastic_id = uuidv4();
+// const elastic_id = uuidv4();
 const { convert } = require("html-to-text");
 const client = new Client({
     node: "http://localhost:9200",
@@ -13,6 +12,55 @@ const client = new Client({
         password: "kylerim123",
     },
 });
+
+const queue = async.queue(queueCallback, 3);
+
+const bulkQueue = async.queue(bulkQueueCallback, 3);
+
+exports.contentFormatter = function (id, delta) {
+    let converter = new QuillDeltaToHtmlConverter(delta, {});
+    let html = converter.convert();
+    let content = convert(html, {
+        wordwrap: null,
+    });
+    content = content.replace(/(\r\n|\n|\r)/gm, " ");
+    return [
+        {
+            update: {
+                _id: id,
+                _index: "documents",
+                retry_on_conflict: 3,
+                _source: false,
+            },
+        },
+        {
+            doc: {
+                content,
+            },
+        },
+    ];
+};
+
+const bulkQueueCallback = async function ({ operations }, completed) {
+    // const content = toPlaintext(delta);
+    // const result = await client.update({
+    //     refresh: true,
+    //     retry_on_conflict: 2,
+    //     index: "documents",
+    //     id: id,
+    //     doc: {
+    //         content: content,
+    //     },
+    // });
+    const result = await client.bulk({
+        _source: false,
+        operations,
+        refresh: true,
+    });
+    if (result) {
+        completed(null, operations.length / 2);
+    }
+};
 
 const queueCallback = async function ({ id, delta }, completed) {
     let converter = new QuillDeltaToHtmlConverter(delta, {});
@@ -46,10 +94,8 @@ const queueCallback = async function ({ id, delta }, completed) {
     }
 };
 
-const queue = async.queue(queueCallback, 3);
-
 exports.createIndex = async function (id, title, content) {
-    console.log("elastic client id", elastic_id);
+    // console.log("elastic client id", elastic_id);
     const result = await client.index({
         refresh: true,
         index: "documents",
@@ -78,6 +124,16 @@ exports.updateIndex = function (id, delta) {
         } else {
             console.log(`Finished processing task ${docid}
                    tasks remaining`);
+        }
+    });
+};
+
+exports.updateBulk = function (operations) {
+    bulkQueue.push({ operations }, (error, number) => {
+        if (error) {
+            console.log(`An error occurred while processing task${error}`);
+        } else {
+            console.log(`Finished processing ${number} updates`);
         }
     });
 };
