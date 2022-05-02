@@ -56,7 +56,7 @@ const IP = IS_PRODUCTION_MODE ? PROD_IP : LOCAL_IP;
 
 const sessionStore = new MongoStore({
     client: mongooseConnection.getClient(),
-    dbName: "milestone2",
+    dbName: "milestone4",
     autoRemove: "native",
 });
 
@@ -102,7 +102,9 @@ if (IS_PRODUCTION_MODE) {
 
 //ShareDB Connection
 ShareDB.types.register(richText.type);
-const socket = new WebSocket(websocketServer);
+let websocketServerDynamic =
+    parseInt(PORT) % 2 == 0 ? "ws://localhost:5555" : "ws://localhost:5556";
+const socket = new WebSocket(websocketServerDynamic);
 const connection = new ShareDB.Connection(socket);
 
 let docSessions = new Map();
