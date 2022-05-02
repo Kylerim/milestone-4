@@ -737,11 +737,11 @@ app.get("/users/verify", verify);
 if (IS_PRODUCTION_MODE) {
     app.listen(PORT, IP, () =>
         console.log(
-            `[PRODUCTION MODE] CSE356 Milestone 2: listening on port ${PORT}`
+            `[PRODUCTION MODE] CSE356 Milestone 4: listening on port ${PORT}`
         )
     );
 } else {
     app.listen(PORT, IP, () =>
-        console.log(`CSE356 Milestone 2: listening on port ${PORT}`)
+        console.log(`CSE356 Milestone 4: listening on port ${PORT}`)
     );
 }

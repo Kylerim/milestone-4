@@ -7,10 +7,10 @@ var WebSocketJSONStream = require("@teamwork/websocket-json-stream");
 // const { IS_PRODUCTION_MODE, IP } = require('./common.js')
 
 const sharedbmongoose = require("sharedb-mongo");
+const args = require("minimist")(process.argv.slice(2));
+const PORT = !IS_PRODUCTION_MODE ? 5555 : args.port ? args.port : 5555;
 
-const PORT = 5555;
-
-const db = sharedbmongoose("mongodb://localhost:27017/milestone3", {
+const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -39,7 +39,7 @@ function startServer() {
     //     server.listen(PORT, IP, () => console.log(`CSE356 Milestone 1 ShareDB: listening on port ${PORT}`))
     // } else {
     server.listen(PORT, () =>
-        console.log(`CSE356 Milestone 1 ShareDB: listening on port ${PORT}`)
+        console.log(`CSE356 Milestone 4 ShareDB: listening on port ${PORT}`)
     );
     // }
 }
