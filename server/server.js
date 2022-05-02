@@ -102,8 +102,10 @@ if (IS_PRODUCTION_MODE) {
 
 //ShareDB Connection
 ShareDB.types.register(richText.type);
-let websocketServerDynamic =
-    parseInt(PORT) % 2 == 0 ? "ws://localhost:5555" : "ws://localhost:5556";
+
+let sharedbServerIP = (parseInt(PORT) % 4) + 5555;
+let websocketServerDynamic = `ws://localhost:${sharedbServerIP}`;
+
 const socket = new WebSocket(websocketServerDynamic);
 const connection = new ShareDB.Connection(socket);
 
