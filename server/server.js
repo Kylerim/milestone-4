@@ -319,113 +319,6 @@ function sendPresenceEventsToAll(request, docId, connectionId, cursor) {
     }
 }
 
-// function queueCallback({ request, response }, completed) {
-//     console.log(
-//         "Currently Busy Processing Task " + request.params.connectionId
-//     );
-//     // updateOps(request, response);
-//     // const remaining = queue.length();
-
-//     if (!request.session.user) {
-//         //response.setHeader('X-CSE356', GROUP_ID);
-//         response.json({ error: true, message: "Not logged in" });
-//         return;
-//     }
-
-//     let connectionId = request.params.connectionId;
-//     let docId = request.params.docId;
-//     let doc = connection.get("documents", docId);
-//     let content = request.body.op;
-//     let version = request.body.version;
-//     // let remaining = 0;
-//     // if (docSessions.has(docId)) {
-//     //     remaining = docSessions.get(docId).queue.length;
-//     // }
-
-//     if (
-//         docSessions.has(docId) &&
-//         Math.abs(version - docSessions.get(docId).elasticVersion) > 5
-//     ) {
-//         console.log(
-//             "Version of elastic: ",
-//             docSessions.get(docId).elasticVersion,
-//             " Version:",
-//             version
-//         );
-//         docSessions.get(docId).elasticVersion = version;
-//         updateIndex(docId, doc.data.ops);
-//     }
-//     console.log("******************************************");
-//     console.log("******************************************");
-
-//     // console.log("VERSION OP : ", version, "VERSION DOC : ", doc.version);
-//     // console.log("FROM: ", JSON.stringify(connectionId));
-//     // console.log("CONTENT: ", JSON.stringify(content));
-//     // console.log("------------------------------------------");
-
-//     if (version < doc.version) {
-//         console.log("Sending retry back");
-//         completed(null, { connectionId });
-//         response.json({ status: "retry" });
-//         response.end();
-//         return;
-//     } else if (version == doc.version) {
-//         console.log("Version Ok. Preparing to submit doc...");
-
-//         if (docSessions.get(docId).isBeingProcessed) {
-//             console.log("[ERROR] Doc is busy. Sending retry back");
-//             response.json({ status: "retry" });
-//             response.end();
-//             return;
-//         } else {
-//             docSessions.get(docId).isBeingProcessed = true;
-
-//             doc.submitOp(content, { source: connectionId }, (err) => {
-//                 if (err) {
-//                     console.log(
-//                         "Unable to submit OP to sharedb: ",
-//                         JSON.stringify(err)
-//                     );
-//                     // response.setHeader('X-CSE356', GROUP_ID);
-//                     response.json({
-//                         error: true,
-//                         message: "Failed to update ops",
-//                     });
-//                     response.end();
-//                     return;
-//                     // EDIT THE VERSIONS
-//                 } else {
-//                     console.log(
-//                         "OP Submission to Sharedb Complete. From: ",
-//                         connectionId,
-//                         "Version: ",
-//                         version
-//                     );
-//                     // console.log("Content: ", content);
-//                     // console.log("Preparing to send acknowledgement back...");
-//                     sendOpToAll(request, docId, connectionId, content);
-//                     sendAck(request, docId, connectionId, content, version);
-//                     completed(null, { connectionId });
-//                     docSessions.get(docId).isBeingProcessed = false;
-//                     response.json({ status: "ok" });
-//                     response.end();
-//                     return;
-//                 }
-//             });
-//         }
-//     } else {
-//         console.log("[VERSION ERROR]: Client is ahead of server");
-//         response.json({
-//             error: true,
-//             message: "Client is ahead of server ",
-//         });
-//         response.end();
-//         return;
-//     }
-
-//     // const connectionId = request.params.connectionId;
-// }
-
 function updateOpsQueue(request, response) {
     const docId = request.params.docId;
     if (!docSessions.has(docId)) {
@@ -481,7 +374,7 @@ function updateOpsQueue(request, response) {
     // console.log("CONTENT: ", JSON.stringify(content));
     // console.log("------------------------------------------");
 
-    if (version < doc.version) {
+    if (version < doc.version || version > doc.version) {
         console.log("Sending retry back");
         // completed(null, { connectionId });
         response.json({ status: "retry" });
@@ -531,15 +424,16 @@ function updateOpsQueue(request, response) {
                 }
             });
         }
-    } else {
-        console.log("[VERSION ERROR]: Client is ahead of server");
-        response.json({
-            error: true,
-            message: "[Impossible] Client is ahead of server",
-        });
-        response.end();
-        return;
     }
+    // else {
+    //     console.log("[VERSION ERROR]: Client is ahead of server");
+    //     response.json({
+    //         error: true,
+    //         message: "[Impossible] Client is ahead of server",
+    //     });
+    //     response.end();
+    //     return;
+    // }
 }
 
 function updateCursor(request, response) {
