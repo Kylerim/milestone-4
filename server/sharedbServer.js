@@ -4,7 +4,7 @@ var ShareDB = require("sharedb");
 var richText = require("rich-text");
 var WebSocket = require("ws");
 var WebSocketJSONStream = require("@teamwork/websocket-json-stream");
-// const { IS_PRODUCTION_MODE, IP } = require('./common.js')
+const { IS_PRODUCTION_MODE } = require("./common.js");
 
 const sharedbmongoose = require("sharedb-mongo");
 const args = require("minimist")(process.argv.slice(2));
