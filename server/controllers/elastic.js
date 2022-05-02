@@ -3,7 +3,8 @@ const { PROD_IP, ELASTIC_PORT, GROUP_ID, LOCAL_IP } = require("../common.js");
 const QuillDeltaToHtmlConverter =
     require("quill-delta-to-html").QuillDeltaToHtmlConverter;
 const async = require("async");
-
+const { v4: uuidv4 } = require("uuid");
+const id = uuidv4();
 const { convert } = require("html-to-text");
 const client = new Client({
     node: "http://localhost:9200",
@@ -12,6 +13,8 @@ const client = new Client({
         password: "kylerim123",
     },
 });
+
+console.log("elastic client id", id);
 
 const queueCallback = async function ({ id, delta }, completed) {
     let converter = new QuillDeltaToHtmlConverter(delta, {});
