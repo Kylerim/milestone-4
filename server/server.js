@@ -104,6 +104,7 @@ if (IS_PRODUCTION_MODE) {
 ShareDB.types.register(richText.type);
 
 let sharedbServerIP = (parseInt(PORT) % 4) + 5555;
+sharedbServerIP = sharedbServerIP.toString();
 let websocketServerDynamic = `ws://localhost:${sharedbServerIP}`;
 
 const socket = new WebSocket(websocketServerDynamic);
