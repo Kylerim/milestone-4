@@ -19,7 +19,7 @@ const queueCallback = async function ({ id, delta }, completed) {
     let content = convert(html, {
         wordwrap: null,
     });
-    content = content.replace(/(\r\n|\n|\r)/gm, "");
+    content = content.replace(/(\r\n|\n|\r)/gm, " ");
     // const content = toPlaintext(delta);
     console.log("Updating content", content);
     // const result = await client.update({
