@@ -7,6 +7,7 @@ var ShareDB = require("sharedb/lib/client");
 const session = require("express-session");
 const { mongooseConnection } = require("./db/connectDB");
 const MongoStore = require("connect-mongo");
+const sharedbmongoose = require("sharedb-mongo");
 const cors = require("cors");
 const path = require("path");
 const multer = require("multer");
@@ -49,6 +50,11 @@ const {
 } = require("./controllers/elastic");
 const { Document } = require("./models/Document");
 // const { getDocLists } = require('./controllers/documents');
+
+const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 const PORT = !IS_PRODUCTION_MODE ? 5001 : args.port ? args.port : 5001;
 //const PORT = 5001;
@@ -106,11 +112,6 @@ if (IS_PRODUCTION_MODE) {
 //     parseInt(PORT) % 2 == 0 ? "ws://localhost:5555" : "ws://localhost:5556";
 // const socket = new WebSocket(websocketServerDynamic);
 // const connection = new ShareDB.Connection(socket);
-
-const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
 
 ShareDB.types.register(richText.type);
 const backend = new ShareDB({ presence: true, db });
