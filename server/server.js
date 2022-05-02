@@ -108,6 +108,24 @@ const connection = new ShareDB.Connection(socket);
 let docSessions = new Map();
 let names = new Map();
 
+function sendBulkUpdate() {
+    toUpdate = [];
+    docSessions.forEach((docSession, docId) => {
+        if (docSession.isTouched) {
+            console.log(
+                "[Updated] Version of elastic: ",
+                docSession.elasticVersion
+            );
+            // docSessions.get(docId).elasticVersion = version;
+            let doc = connection.get("documents", docId);
+            toUpdate.push(contentFormatter(docId, doc.data.ops));
+            docSession.isTouched = false;
+        }
+    });
+    updateBulk(toUpdate);
+}
+
+setInterval(sendBulkUpdate, 5000);
 //EVENT STREAM
 function eventsHandler(request, response) {
     const headers = {
@@ -355,19 +373,19 @@ function updateOpsQueue(request, response) {
     //     remaining = docSessions.get(docId).queue.length;
     // }
 
-    if (
-        docSessions.has(docId) &&
-        Math.abs(version - docSessions.get(docId).elasticVersion) > 20
-    ) {
-        console.log(
-            "Version of elastic: ",
-            docSessions.get(docId).elasticVersion,
-            " Version:",
-            version
-        );
-        docSessions.get(docId).elasticVersion = version;
-        updateIndex(docId, doc.data.ops);
-    }
+    // if (
+    //     docSessions.has(docId) &&
+    //     Math.abs(version - docSessions.get(docId).elasticVersion) > 20
+    // ) {
+    //     console.log(
+    //         "Version of elastic: ",
+    //         docSessions.get(docId).elasticVersion,
+    //         " Version:",
+    //         version
+    //     );
+    //     docSessions.get(docId).elasticVersion = version;
+    //     updateIndex(docId, doc.data.ops);
+    // }
     console.log("******************************************");
     console.log("******************************************");
 
@@ -416,6 +434,7 @@ function updateOpsQueue(request, response) {
                     );
                     // console.log("Content: ", content);
                     // console.log("Preparing to send acknowledgement back...");
+                    docSessions.get(docId).isTouched = true;
                     sendOpToAll(request, docId, connectionId, content);
                     sendAck(request, docId, connectionId, content, version);
                     // completed(null, { connectionId });
