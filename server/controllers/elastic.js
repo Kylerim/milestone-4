@@ -135,14 +135,16 @@ exports.updateIndex = function (id, delta) {
 
 exports.updateBulk = function (operations) {
     console.log("update Bulk is called operations ", operations);
+
+    const completed = (error, number) => {
+        if (error) {
+            console.log(`An error occurred while processing task${error}`);
+        } else {
+            console.log(`Finished processing ${number} updates`);
+        }
+    };
     if (operations.length > 0) {
-        bulkQueue.push({ operations }, (error, number) => {
-            if (error) {
-                console.log(`An error occurred while processing task${error}`);
-            } else {
-                console.log(`Finished processing ${number} updates`);
-            }
-        });
+        bulkQueue.push({ operations }, completed);
     }
 };
 
