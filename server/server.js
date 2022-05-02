@@ -8,7 +8,8 @@ const session = require("express-session");
 const { mongooseConnection } = require("./db/connectDB");
 const MongoStore = require("connect-mongo");
 const sharedbmongoose = require("sharedb-mongo");
-const ShareDB = require("sharedb");
+
+const ShareDBServer = require("sharedb");
 const cors = require("cors");
 const path = require("path");
 const multer = require("multer");
@@ -114,8 +115,8 @@ if (IS_PRODUCTION_MODE) {
 // const socket = new WebSocket(websocketServerDynamic);
 // const connection = new ShareDB.Connection(socket);
 
-ShareDB.types.register(richText.type);
-const backend = new ShareDB({ presence: true, db });
+ShareDBServer.types.register(richText.type);
+const backend = new ShareDBServer({ presence: true, db });
 
 const connection = backend.connect();
 let docSessions = new Map();
