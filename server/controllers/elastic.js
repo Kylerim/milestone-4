@@ -56,11 +56,12 @@ const bulkQueueCallback = async function ({ operations }, completed) {
         refresh: true,
     });
 
-    if (!result.errors) {
+    if (result) {
         completed(null, operations.length);
-    } else {
-        completed(result.errors, operations.length);
     }
+    // } else {
+    //     completed(result.errors, operations.length);
+    // }
 };
 
 const queueCallback = async function ({ id, delta }, completed) {
@@ -134,16 +135,15 @@ exports.updateIndex = function (id, delta) {
 };
 
 exports.updateBulk = function (operations) {
-    console.log("update Bulk is called operations ", operations);
-
     const completed = (error, number) => {
         if (error) {
-            console.log(`An error occurred while processing task${error}`);
+            console.log(`An error occurred while processing task ${error}`);
         } else {
             console.log(`Finished processing ${number} updates`);
         }
     };
     if (operations.length > 0) {
+        console.log("update Bulk is called operations ", operations);
         bulkQueue.push({ operations }, completed);
     }
 };
