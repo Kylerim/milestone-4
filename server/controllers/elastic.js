@@ -13,10 +13,6 @@ const client = new Client({
     },
 });
 
-const queue = async.queue(queueCallback, 3);
-
-const bulkQueue = async.queue(bulkQueueCallback, 3);
-
 exports.contentFormatter = function (id, delta) {
     let converter = new QuillDeltaToHtmlConverter(delta, {});
     let html = converter.convert();
@@ -97,6 +93,10 @@ const queueCallback = async function ({ id, delta }, completed) {
         completed(null, id);
     }
 };
+
+const queue = async.queue(queueCallback, 3);
+
+const bulkQueue = async.queue(bulkQueueCallback, 3);
 
 exports.createIndex = async function (id, title, content) {
     // console.log("elastic client id", elastic_id);
