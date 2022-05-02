@@ -52,6 +52,7 @@ const bulkQueueCallback = async function ({ operations }, completed) {
     //         content: content,
     //     },
     // });
+    console.log(operations);
     if (operations.length > 0) {
         const result = await client.bulk({
             _source: false,
