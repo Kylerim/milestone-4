@@ -55,10 +55,10 @@ const bulkQueueCallback = async function ({ operations }, completed) {
             operations,
             refresh: true,
         });
-    }
 
-    if (result) {
-        completed(null, operations.length);
+        if (result) {
+            completed(null, operations.length);
+        }
     }
 };
 
