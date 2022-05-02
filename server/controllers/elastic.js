@@ -72,7 +72,7 @@ exports.deleteIndex = async function (id) {
 exports.updateIndex = function (id, delta) {
     queue.push({ id, delta }, (error, docid) => {
         if (error) {
-            console.log(`An error occurred while processing task`);
+            console.log(`An error occurred while processing task${error}`);
         } else {
             console.log(`Finished processing task ${docid}
                    tasks remaining`);
