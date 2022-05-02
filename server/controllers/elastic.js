@@ -49,18 +49,17 @@ const bulkQueueCallback = async function ({ operations }, completed) {
     //     },
     // });
     console.log(operations);
-    if (operations.length > 0) {
-        const result = await client.bulk({
-            _source: false,
-            operations,
-            refresh: true,
-        });
 
-        if (!result.errors) {
-            completed(null, operations.length);
-        } else {
-            completed(result.errors, operations.length);
-        }
+    const result = await client.bulk({
+        _source: false,
+        operations,
+        refresh: true,
+    });
+
+    if (!result.errors) {
+        completed(null, operations.length);
+    } else {
+        completed(result.errors, operations.length);
     }
 };
 
@@ -135,13 +134,16 @@ exports.updateIndex = function (id, delta) {
 };
 
 exports.updateBulk = function (operations) {
-    bulkQueue.push({ operations }, (error, number) => {
-        if (error) {
-            console.log(`An error occurred while processing task${error}`);
-        } else {
-            console.log(`Finished processing ${number} updates`);
-        }
-    });
+    console.log("update Bulk is called operations ", operations);
+    if (operations.length > 0) {
+        bulkQueue.push({ operations }, (error, number) => {
+            if (error) {
+                console.log(`An error occurred while processing task${error}`);
+            } else {
+                console.log(`Finished processing ${number} updates`);
+            }
+        });
+    }
 };
 
 // exports.searchIndex = async (req, res) => {

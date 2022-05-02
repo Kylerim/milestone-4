@@ -118,7 +118,9 @@ function sendBulkUpdate() {
             );
             // docSessions.get(docId).elasticVersion = version;
             let doc = connection.get("documents", docId);
-            toUpdate.push(contentFormatter(docId, doc.data.ops));
+            const formatted = contentFormatter(docId, doc.data.ops);
+            console.log("Formatteed", JSON.stringify(formatted));
+            toUpdate.push(formatted);
             docSession.isTouched = false;
         }
     });
