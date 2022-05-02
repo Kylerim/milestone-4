@@ -14,8 +14,6 @@ const client = new Client({
     },
 });
 
-console.log("elastic client id", id);
-
 const queueCallback = async function ({ id, delta }, completed) {
     let converter = new QuillDeltaToHtmlConverter(delta, {});
     let html = converter.convert();
@@ -51,6 +49,7 @@ const queueCallback = async function ({ id, delta }, completed) {
 const queue = async.queue(queueCallback, 3);
 
 exports.createIndex = async function (id, title, content) {
+    console.log("elastic client id", id);
     const result = await client.index({
         refresh: true,
         index: "documents",
