@@ -24,7 +24,7 @@ const {
     PROD_IP,
     LOCAL_IP,
     GROUP_ID,
-    websocketServer,
+    MONGO_SHAREDB_IP
 } = require("./common.js");
 
 if (args.s) {
@@ -105,7 +105,7 @@ ShareDB.types.register(richText.type);
 
 let sharedbServerIP = (parseInt(PORT) % 5) + 5555;
 sharedbServerIP = sharedbServerIP.toString();
-let websocketServerDynamic = `ws://localhost:${sharedbServerIP}`;
+let websocketServerDynamic = `ws://${MONGO_SHAREDB_IP}:${sharedbServerIP}`;
 
 const socket = new WebSocket(websocketServerDynamic);
 const connection = new ShareDB.Connection(socket);
