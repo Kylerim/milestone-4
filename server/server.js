@@ -504,6 +504,14 @@ function updateCursor(request, response) {
         response.json({ error: true, message: "Not logged in" });
         return;
     }
+
+    if (!docSessions.has(docId)) {
+        response.json({
+            error: true,
+            message: "Document does not exit anymore",
+        });
+        return;
+    }
     const connectionId = request.params.connectionId;
     const docId = request.params.docId;
 
