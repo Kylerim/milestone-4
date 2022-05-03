@@ -153,7 +153,7 @@ function eventsHandler(request, response) {
     // if no active docsession, add to current doc session map
     if (!docSessions.has(docId)) {
         const doc = connection.get("documents", docId);
-        // const queue = async.queue(queueCallback, 1);
+        const queue = async.queue(queueCallback, 20);
         if (!doc.subscribed) {
             doc.subscribe(function (err) {
                 console.log("Subscribed to ", docId);
@@ -167,6 +167,7 @@ function eventsHandler(request, response) {
             clients: new Set(),
             // queue,
             isBeingProcessed: false,
+            queue,
         });
     }
 
@@ -251,6 +252,39 @@ function eventsHandler(request, response) {
     });
 }
 
+function queueCallback({ response, data }) {
+    response.write(`data: ${JSON.stringify(data)}\n\n`);
+}
+
+// function sendOpToAll(request, docId, connectionId, data) {
+//     if (!request.session.user) {
+//         ////response.setHeader('X-CSE356', GROUP_ID);
+//         response.json({ error: true, message: "Not logged in" });
+//         return;
+//     }
+//     if (!docSessions.get(docId)) {
+//         response.json({
+//             error: true,
+//             message: "Document does not exit anymore",
+//         });
+//         return;
+//     }
+//     const clients = docSessions.get(docId).clients;
+//     console.log("Broadcasting OPs to ", clients.size - 1);
+//     try {
+//         clients.forEach((client) => {
+//             if (client.id != connectionId) {
+//                 //send updates to all except the request sender
+//                 console.log("[OP] Sending OP TO: ", client.id);
+//                 client.response.write(`data: ${JSON.stringify(data)}\n\n`);
+//                 console.log(`data: ${JSON.stringify(data)}`);
+//             }
+//         });
+//     } catch (e) {
+//         console.log(e);
+//     }
+// }
+
 function sendOpToAll(request, docId, connectionId, data) {
     if (!request.session.user) {
         ////response.setHeader('X-CSE356', GROUP_ID);
@@ -264,20 +298,16 @@ function sendOpToAll(request, docId, connectionId, data) {
         });
         return;
     }
-    const clients = docSessions.get(docId).clients;
-    console.log("Broadcasting OPs to ", clients.size - 1);
-    try {
-        clients.forEach((client) => {
-            if (client.id != connectionId) {
-                //send updates to all except the request sender
-                console.log("[OP] Sending OP TO: ", client.id);
-                client.response.write(`data: ${JSON.stringify(data)}\n\n`);
-                console.log(`data: ${JSON.stringify(data)}`);
-            }
-        });
-    } catch (e) {
-        console.log(e);
-    }
+    const localDoc = docSessions.get(docId);
+    const queue = localDoc.queue;
+    const tasks = Array.from(localDoc.clients, (client) => {
+        return {
+            response: client.response,
+            data,
+        };
+    });
+
+    queue.push(tasks);
 }
 
 function sendAck(request, docId, connectionId, data, version) {
