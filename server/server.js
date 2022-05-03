@@ -614,7 +614,7 @@ async function deleteDoc(request, response) {
             console.log(error.message);
             response.json({
                 error: true,
-                message: "shareDB cannot delete document",
+                message: "shareDB cannot delete document" + error.message,
             });
             throw error;
         }
