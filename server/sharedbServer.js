@@ -13,7 +13,7 @@ const PORT = !IS_PRODUCTION_MODE ? 5555 : args.port ? args.port : 5555;
 const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    getOpsWithoutStrictLinking: true,
+    // getOpsWithoutStrictLinking: true,
 });
 
 ShareDB.types.register(richText.type);
