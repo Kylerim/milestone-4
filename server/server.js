@@ -611,9 +611,10 @@ async function deleteDoc(request, response) {
     doc.del({}, function (error) {
         // response.setHeader('X-CSE356', GROUP_ID);
         if (error) {
+            console.log(error.message);
             response.json({
                 error: true,
-                message: "Failed to delete document",
+                message: error.message,
             });
             throw error;
         }
@@ -622,9 +623,10 @@ async function deleteDoc(request, response) {
 
         Document.deleteOne({ _id: docId }).exec((err) => {
             if (err) {
+                console.log(error.message);
                 response.json({
                     error: true,
-                    message: "Cannot delete the document from mongodb",
+                    message: error.message,
                 });
             }
         });
