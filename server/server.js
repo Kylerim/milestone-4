@@ -14,7 +14,7 @@ const bodyParser = require("body-parser");
 const richText = require("rich-text");
 const { v4: uuidv4 } = require("uuid");
 const mime = require("mime");
-// const async = require("async");
+const async = require("async");
 
 const args = require("minimist")(process.argv.slice(2));
 var QuillDeltaToHtmlConverter =
