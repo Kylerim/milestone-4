@@ -614,12 +614,10 @@ async function deleteDoc(request, response) {
             console.log(error.message);
             response.json({
                 error: true,
-                message: error.message,
+                message: "shareDB cannot delete document",
             });
             throw error;
         }
-        docSessions.delete(docId);
-        names.delete(docId);
 
         Document.deleteOne({ _id: docId }).exec((err) => {
             if (err) {
@@ -630,6 +628,9 @@ async function deleteDoc(request, response) {
                 });
             }
         });
+
+        docSessions.delete(docId);
+        names.delete(docId);
         response.json({
             status: "ok",
             message: "Successfully deleted the document: " + docId,
