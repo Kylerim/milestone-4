@@ -570,17 +570,19 @@ async function deleteDoc(request, response) {
     const doc = connection.get("documents", docId);
     doc.del({}, function (error) {
         // response.setHeader('X-CSE356', GROUP_ID);
+      
         if (error) {
+            console.log("Failed to delete document");
             response.json({
                 error: true,
-                message: "Failed to delete document",
+                message: error.message,
             });
             throw error;
         }
         docSessions.delete(docId);
         names.delete(docId);
 
-        Document.deleteOne({ _id: docId }).exec((err) => {
+        await Document.deleteOne({ _id: docId }).exec((err) => {
             if (err) {
                 response.json({
                     error: true,
