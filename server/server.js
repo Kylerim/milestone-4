@@ -300,11 +300,14 @@ function sendOpToAll(request, docId, connectionId, data) {
     }
     const localDoc = docSessions.get(docId);
     const queue = localDoc.queue;
-    const tasks = Array.from(localDoc.clients, (client) => {
-        return {
-            response: client.response,
-            data,
-        };
+    const tasks = [];
+    Array.from(localDoc.clients, (client) => {
+        if (client.id !== connectionId) {
+            tasks.push({
+                response: client.response,
+                data,
+            });
+        }
     });
 
     queue.push(tasks);
