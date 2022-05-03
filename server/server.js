@@ -505,6 +505,8 @@ function updateCursor(request, response) {
         return;
     }
 
+    const connectionId = request.params.connectionId;
+    const docId = request.params.docId;
     if (!docSessions.has(docId)) {
         response.json({
             error: true,
@@ -512,9 +514,6 @@ function updateCursor(request, response) {
         });
         return;
     }
-    const connectionId = request.params.connectionId;
-    const docId = request.params.docId;
-
     const doc = docSessions.get(docId).doc;
     // console.log("[PRESENCE] New Presence Info Received");
     console.log(request.body);
