@@ -165,7 +165,6 @@ function eventsHandler(request, response) {
             doc,
             elasticVersion: doc.version,
             clients: new Set(),
-            // queue,
             isBeingProcessed: false,
             queue,
         });
@@ -474,9 +473,9 @@ function updateOpsQueue(request, response) {
                     );
                     // console.log("Content: ", content);
                     // console.log("Preparing to send acknowledgement back...");
-
-                    sendOpToAll(request, docId, connectionId, content);
                     sendAck(request, docId, connectionId, content, version);
+                    sendOpToAll(request, docId, connectionId, content);
+
                     // completed(null, { connectionId });
                     docSessions.get(docId).isTouched = true;
                     docSessions.get(docId).isBeingProcessed = false;
