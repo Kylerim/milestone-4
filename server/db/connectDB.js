@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const { shareDBMongoDBServer } = require("../common");
+const { MongoDBServer } = require("../common");
 
-mongoose.connect(`mongodb://${shareDBMongoDBServer}:27017/milestone4`, {
+mongoose.connect(`mongodb://${MongoDBServer}:27017/milestone4`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

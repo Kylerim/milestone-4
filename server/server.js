@@ -25,7 +25,8 @@ const {
     LOCAL_IP,
     GROUP_ID,
     websocketServer,
-    shareDBMongoDBServer,
+    MongoDBServer,
+    shareDBServer,
 } = require("./common.js");
 
 if (args.s) {
@@ -104,9 +105,9 @@ if (IS_PRODUCTION_MODE) {
 //ShareDB Connection
 ShareDB.types.register(richText.type);
 
-let sharedbServerIP = (parseInt(PORT) % 8) + 5555;
-sharedbServerIP = sharedbServerIP.toString();
-let websocketServerDynamic = `ws://${shareDBMongoDBServer}:${sharedbServerIP}`;
+let sharedbServerPort = (parseInt(PORT) % 12) + 5555;
+sharedbServerPort = sharedbServerPort.toString();
+let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 
 const socket = new WebSocket(websocketServerDynamic);
 const connection = new ShareDB.Connection(socket);
