@@ -27,10 +27,10 @@ const {
     websocketServer,
 } = require("./common.js");
 
-if (args.s) {
-    console = console || {};
-    console.log = function () {};
-}
+// if (args.s) {
+//     console = console || {};
+//     console.log = function () {};
+// }
 
 const {
     adduser,
