@@ -5,4 +5,5 @@ exports.PROD_IP = "127.0.0.1";
 exports.LOCAL_IP = "localhost";
 exports.GROUP_ID = "61f9cf4e4261123151824fdc";
 exports.websocketServer = "ws://localhost:5555";
+exports.shareDBMongoDBServer = "194.113.74.29";
 exports.ELASTIC_PORT = 6001;
