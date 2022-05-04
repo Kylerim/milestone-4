@@ -106,7 +106,7 @@ ShareDB.types.register(richText.type);
 
 let sharedbServerIP = (parseInt(PORT) % 5) + 5555;
 sharedbServerIP = sharedbServerIP.toString();
-let websocketServerDynamic = `ws://${shareDBMongoDBServer}:${sharedbServerIP}`;
+let websocketServerDynamic = `ws://localhost:${sharedbServerIP}`;
 
 const socket = new WebSocket(websocketServerDynamic);
 const connection = new ShareDB.Connection(socket);
@@ -133,7 +133,7 @@ function sendBulkUpdate() {
     updateBulk(toUpdate);
 }
 
-setInterval(sendBulkUpdate, 3500);
+setInterval(sendBulkUpdate, 5000);
 //EVENT STREAM
 function eventsHandler(request, response) {
     const headers = {

@@ -4,17 +4,20 @@ var ShareDB = require("sharedb");
 var richText = require("rich-text");
 var WebSocket = require("ws");
 var WebSocketJSONStream = require("@teamwork/websocket-json-stream");
-const { IS_PRODUCTION_MODE } = require("./common.js");
+const { IS_PRODUCTION_MODE, shareDBMongoDBServer } = require("./common.js");
 
 const sharedbmongoose = require("sharedb-mongo");
 const args = require("minimist")(process.argv.slice(2));
 const PORT = !IS_PRODUCTION_MODE ? 5555 : args.port ? args.port : 5555;
 
-const db = sharedbmongoose("mongodb://localhost:27017/milestone4", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    getOpsWithoutStrictLinking: true,
-});
+const db = sharedbmongoose(
+    `mongodb://${shareDBMongoDBServer}:27017/milestone4`,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        getOpsWithoutStrictLinking: true,
+    }
+);
 
 ShareDB.types.register(richText.type);
 var backend = new ShareDB({ presence: true, db });
