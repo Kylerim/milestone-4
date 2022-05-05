@@ -68,7 +68,7 @@ app.use(
         secret: "secret-key",
         saveUninitialized: true,
         resave: false,
-        store: sessionStore,
+        // store: sessionStore,
         cookie: { secure: false },
         expires: new Date(Date.now() + 1 * 86400 * 1000), //expire 1 day
     })
