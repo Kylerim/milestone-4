@@ -119,10 +119,10 @@ function sendBulkUpdate() {
     toUpdate = [];
     docSessions.forEach((docSession, docId) => {
         if (docSession.isTouched) {
-            console.log(
-                "[Updated] Version of elastic: ",
-                docSession.elasticVersion
-            );
+            // console.log(
+            //     "[Updated] Version of elastic: ",
+            //     docSession.elasticVersion
+            // );
             // docSessions.get(docId).elasticVersion = version;
             let doc = connection.get("documents", docId);
             const formatted = contentFormatter(docId, doc.data.ops);
@@ -160,6 +160,15 @@ function eventsHandler(request, response) {
             doc.subscribe(function (err) {
                 console.log("Subscribed to ", docId);
                 if (err) throw err;
+
+                doc.on("op", function (delta, source) {
+                    // console.log("sending Presence back");
+                    //console.log(JSON.stringify(doc.data.ops));
+                    // console.log(doc);
+                    // console.log(docSessions.size);
+                    sendAck2(docId, source, delta);
+                    sendOpToAll2(docId, source, delta);
+                });
             });
         }
 
@@ -251,6 +260,65 @@ function eventsHandler(request, response) {
             // console.log("---------------------------------------------------");
         }
     });
+}
+
+function sendAck2(docId, connectionId, data) {
+    // if (!request.session.user) {
+    //     ////response.setHeader('X-CSE356', GROUP_ID);
+    //     response.json({ error: true, message: "Not logged in" });
+    //     return;
+    // }
+    if (!docSessions.get(docId)) {
+        response.json({
+            error: true,
+            message: "Document does not exit anymore",
+        });
+        return;
+    }
+    const clients = docSessions.get(docId).clients;
+
+    clients.forEach((client) => {
+        if (client.id == connectionId) {
+            const ackData = { ack: data };
+            client.response.write(`data: ${JSON.stringify(ackData)}\n\n`);
+            console.log(
+                "[ACK] Sending TO (itself):",
+                connectionId,
+                "  [Version]: "
+                // version
+            );
+            console.log(`Ack Data: ${JSON.stringify(ackData.ack)}`);
+        }
+    });
+}
+
+function sendOpToAll2(docId, connectionId, data) {
+    // if (!request.session.user) {
+    //     ////response.setHeader('X-CSE356', GROUP_ID);
+    //     response.json({ error: true, message: "Not logged in" });
+    //     return;
+    // }
+    if (!docSessions.get(docId)) {
+        response.json({
+            error: true,
+            message: "Document does not exit anymore",
+        });
+        return;
+    }
+    const clients = docSessions.get(docId).clients;
+    console.log("Broadcasting OPs to ", clients.size - 1);
+    try {
+        clients.forEach((client) => {
+            if (client.id != connectionId) {
+                //send updates to all except the request sender
+                console.log("[OP] Sending OP TO: ", client.id);
+                client.response.write(`data: ${JSON.stringify(data)}\n\n`);
+                console.log(`data: ${JSON.stringify(data)}`);
+            }
+        });
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 function sendOpToAll(request, docId, connectionId, data) {
@@ -443,8 +511,8 @@ function updateOpsQueue(request, response) {
                     );
                     // console.log("Content: ", content);
                     // console.log("Preparing to send acknowledgement back...");
-                    sendAck(request, docId, connectionId, content, version);
-                    sendOpToAll(request, docId, connectionId, content);
+                    // sendAck(request, docId, connectionId, content, version);
+                    // sendOpToAll(request, docId, connectionId, content);
 
                     // completed(null, { connectionId });
                     docSessions.get(docId).isTouched = true;
