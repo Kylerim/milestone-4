@@ -134,7 +134,7 @@ function sendBulkUpdate() {
     updateBulk(toUpdate);
 }
 
-setInterval(sendBulkUpdate, 4000);
+setInterval(sendBulkUpdate, 7000);
 //EVENT STREAM
 function eventsHandler(request, response) {
     const headers = {
@@ -144,11 +144,11 @@ function eventsHandler(request, response) {
         "X-CSE356": GROUP_ID,
     };
     response.writeHead(200, headers);
-    response.write(`data:[]\n\n`);
     if (!request.session.user) {
         response.json({ error: true, message: "Not logged in" });
         return;
     }
+    response.write(`data:[]\n\n`);
     const clientId = request.params.connectionId;
     const docId = request.params.docId;
 
