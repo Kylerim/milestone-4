@@ -349,7 +349,6 @@ function sendPresenceEventsToAll(request, docId, connectionId, cursor) {
 }
 
 function updateOpsQueue(request, response) {
-    const docId = request.params.docId;
     if (!docSessions.has(docId)) {
         response.json({
             error: true,
@@ -373,10 +372,13 @@ function updateOpsQueue(request, response) {
         return;
     }
 
+    const docId = request.params.docId;
+
     let connectionId = request.params.connectionId;
-    let doc = connection.get("documents", docId);
+    // let doc = connection.get("documents", docId);
     let content = request.body.op;
     let version = request.body.version;
+    let localDoc = docSessions.get(docId);
     // let remaining = 0;
     // if (docSessions.has(docId)) {
     //     remaining = docSessions.get(docId).queue.length;
@@ -402,60 +404,62 @@ function updateOpsQueue(request, response) {
     // console.log("FROM: ", JSON.stringify(connectionId));
     // console.log("CONTENT: ", JSON.stringify(content));
     // console.log("------------------------------------------");
-
-    if (version < doc.version || version > doc.version) {
-        console.log("Sending retry back");
-        // completed(null, { connectionId });
-        response.json({ status: "retry" });
-        response.end();
-        return;
-    } else if (version == doc.version) {
-        console.log("Version Ok. Preparing to submit doc...");
-
-        if (docSessions.get(docId).isBeingProcessed) {
-            console.log("[ERROR] Doc is busy. Sending retry back");
+    connection.fetchSnapshot("documents", docId, function (error, snapshot) {
+        if (version < snapshot.v || version > snapshot.v) {
+            console.log("Sending retry back");
+            // completed(null, { connectionId });
             response.json({ status: "retry" });
             response.end();
             return;
-        } else {
-            docSessions.get(docId).isBeingProcessed = true;
+        } else if (version == snapshot.v) {
+            console.log("Version Ok. Preparing to submit doc...");
 
-            doc.submitOp(content, { source: connectionId }, (err) => {
-                if (err) {
-                    console.log(
-                        "Unable to submit OP to sharedb: ",
-                        JSON.stringify(err)
-                    );
-                    // response.setHeader('X-CSE356', GROUP_ID);
-                    response.json({
-                        error: true,
-                        message: "Failed to update ops",
-                    });
-                    response.end();
-                    return;
-                    // EDIT THE VERSIONS
-                } else {
-                    console.log(
-                        "OP Submission to Sharedb Complete. From: ",
-                        connectionId,
-                        "Version: ",
-                        version
-                    );
-                    // console.log("Content: ", content);
-                    // console.log("Preparing to send acknowledgement back...");
-                    sendAck(request, docId, connectionId, content, version);
-                    sendOpToAll(request, docId, connectionId, content);
+            if (docSessions.get(docId).isBeingProcessed) {
+                console.log("[ERROR] Doc is busy. Sending retry back");
+                response.json({ status: "retry" });
+                response.end();
+                return;
+            } else {
+                docSessions.get(docId).isBeingProcessed = true;
 
-                    // completed(null, { connectionId });
-                    docSessions.get(docId).isTouched = true;
-                    docSessions.get(docId).isBeingProcessed = false;
-                    response.json({ status: "ok" });
-                    response.end();
-                    return;
-                }
-            });
+                localDoc.submitOp(content, { source: connectionId }, (err) => {
+                    if (err) {
+                        console.log(
+                            "Unable to submit OP to sharedb: ",
+                            JSON.stringify(err)
+                        );
+                        // response.setHeader('X-CSE356', GROUP_ID);
+                        response.json({
+                            error: true,
+                            message: "Failed to update ops",
+                        });
+                        response.end();
+                        return;
+                        // EDIT THE VERSIONS
+                    } else {
+                        console.log(
+                            "OP Submission to Sharedb Complete. From: ",
+                            connectionId,
+                            "Version: ",
+                            version
+                        );
+                        // console.log("Content: ", content);
+                        // console.log("Preparing to send acknowledgement back...");
+                        sendAck(request, docId, connectionId, content, version);
+                        sendOpToAll(request, docId, connectionId, content);
+
+                        // completed(null, { connectionId });
+                        localDoc.isTouched = true;
+                        localDoc.isBeingProcessed = false;
+                        response.json({ status: "ok" });
+                        response.end();
+                        return;
+                    }
+                });
+            }
         }
-    }
+    });
+
     // else {
     //     console.log("[VERSION ERROR]: Client is ahead of server");
     //     response.json({
