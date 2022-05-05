@@ -56,11 +56,11 @@ const PORT = !IS_PRODUCTION_MODE ? 5001 : args.port ? args.port : 5001;
 //const PORT = 5001;
 const IP = IS_PRODUCTION_MODE ? PROD_IP : LOCAL_IP;
 
-// const sessionStore = new MongoStore({
-//     client: mongooseConnection.getClient(),
-//     dbName: "milestone4",
-//     autoRemove: "native",
-// });
+const sessionStore = new MongoStore({
+    client: mongooseConnection.getClient(),
+    dbName: "milestone4",
+    autoRemove: "native",
+});
 
 const app = express();
 app.use(
@@ -68,7 +68,7 @@ app.use(
         secret: "secret-key",
         saveUninitialized: true,
         resave: false,
-        // store: sessionStore,
+        store: sessionStore,
         cookie: { secure: false },
         expires: new Date(Date.now() + 1 * 86400 * 1000), //expire 1 day
     })
