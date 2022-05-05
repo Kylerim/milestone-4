@@ -134,7 +134,7 @@ function sendBulkUpdate() {
     updateBulk(toUpdate);
 }
 
-setInterval(sendBulkUpdate, 7000);
+setInterval(sendBulkUpdate, 8000);
 //EVENT STREAM
 function eventsHandler(request, response) {
     const headers = {
