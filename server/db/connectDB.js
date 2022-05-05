@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const { MongoDBServer } = require("../common");
 
-mongoose.connect("mongodb://localhost:27017/milestone4", {
+mongoose.connect(`mongodb://${MongoDBServer}:27017/milestone4`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
