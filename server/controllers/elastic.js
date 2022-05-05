@@ -96,9 +96,9 @@ const queueCallback = async function ({ id, delta }) {
     // }
 };
 
-const queue = async.queue(queueCallback, 10);
+const queue = async.queue(queueCallback, 5);
 
-const bulkQueue = async.queue(bulkQueueCallback, 15);
+const bulkQueue = async.queue(bulkQueueCallback, 5);
 bulkQueue.error(function (err, task) {
     console.error("task experienced an error", err, task);
 });

@@ -165,7 +165,7 @@ function eventsHandler(request, response) {
 
         docSessions.set(docId, {
             doc,
-            elasticVersion: doc.version,
+            // elasticVersion: doc.version,
             clients: new Set(),
             // queue,
             isBeingProcessed: false,
@@ -194,7 +194,7 @@ function eventsHandler(request, response) {
         clients.add(newClient);
     }
 
-    console.log("[USERS] Connected Users: ", clients.size);
+    // console.log("[USERS] Connected Users: ", clients.size);
     // console.log("---------------------------------------------------");
     // console.log("---------------------------------------------------");
 
