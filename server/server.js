@@ -112,7 +112,7 @@ let sharedbServerPort = (parseInt(PORT) % 20) + 5555;
 sharedbServerPort = sharedbServerPort.toString();
 let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 
-let elasticSocketPort = (parseInt(PORT) % 2) + 6100;
+let elasticSocketPort = (parseInt(PORT) % 20) + 6100;
 elasticSocketPort = elasticSocketPort.toString();
 let elasticSocketIO = io(`http://${ElasticServer}:${elasticSocketPort}`);
 elasticSocketIO.on("connect", () => {
@@ -149,7 +149,7 @@ function sendBulkUpdate() {
     elasticSocketIO.emit("updateBulk", toUpdate);
 }
 
-setInterval(sendBulkUpdate, 8000);
+setInterval(sendBulkUpdate, 5000);
 //EVENT STREAM
 function eventsHandler(request, response) {
     const headers = {
