@@ -140,7 +140,7 @@ function sendBulkUpdate() {
     });
 
     // updateBulk(toUpdate);
-    await elasticWS.on("connection", function (ws) {
+    elasticWS.on("connection", function (ws) {
         elasticWS.send(JSON.stringify(["updateBulk", toUpdate]));
     });
 }
@@ -229,7 +229,7 @@ function eventsHandler(request, response) {
     request.on("close", () => {
         if (doc && doc.data) {
             // updateIndex(docId, doc.data.ops);
-            await elasticWS.on("connection", function (ws) {
+            elasticWS.on("connection", function (ws) {
                 elasticWS.send(
                     JSON.stringify(["updateIndex", docid, doc.data.ops])
                 );
@@ -538,7 +538,7 @@ async function createDoc(request, response) {
     //adding document to index
 
     // await createIndex(docid, name, "");
-    await elasticWS.on("connection", function (ws) {
+    elasticWS.on("connection", function (ws) {
         elasticWS.send(JSON.stringify(["create", docid, name, ""]));
     });
 
@@ -575,7 +575,7 @@ async function deleteDoc(request, response) {
     // if (doc === undefined)
 
     // await deleteIndex(docId);
-    await elasticWS.on("connection", function (ws) {
+    elasticWS.on("connection", function (ws) {
         elasticWS.send(JSON.stringify(["deleteIndex", docid]));
     });
     Document.findOne({ _id: docId }).exec((err, document) => {
