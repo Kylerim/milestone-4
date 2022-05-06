@@ -112,7 +112,7 @@ let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 
 let elasticSocketPort = (parseInt(PORT) % 2) + 6100;
 elasticSocketPort = elasticSocketPort.toString();
-let elasticWebSocketServer = `ws://${elasticServer}:${elasticSocketPort}`;
+let elasticWebSocketServer = `ws://${ElasticServer}:${elasticSocketPort}`;
 
 const socket = new WebSocket(websocketServerDynamic);
 const elasticWS = new WebSocket(elasticWebSocketServer); // 6101~
