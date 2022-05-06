@@ -108,7 +108,7 @@ if (IS_PRODUCTION_MODE) {
 //ShareDB Connection
 ShareDB.types.register(richText.type);
 
-let sharedbServerPort = (parseInt(PORT) % 12) + 5555;
+let sharedbServerPort = (parseInt(PORT) % 20) + 5555;
 sharedbServerPort = sharedbServerPort.toString();
 let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 

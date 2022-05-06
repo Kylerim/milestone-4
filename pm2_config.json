@@ -56,11 +56,53 @@
         "script"             : "server.js",
         "args"               : "-s --port=5011"
       },
-             {
+      {
         "name"               : "server12",
         "script"             : "server.js",
         "args"               : "-s --port=5012"
+      },
+      {
+        "name"               : "server13",
+        "script"             : "server.js",
+        "args"               : "-s --port=5013"
+      },
+      {
+        "name"               : "server14",
+        "script"             : "server.js",
+        "args"               : "-s --port=5014"
+      },
+      {
+        "name"               : "server15",
+        "script"             : "server.js",
+        "args"               : "-s --port=5015"
+      },
+
+      {
+        "name"               : "server16",
+        "script"             : "server.js",
+        "args"               : "-s --port=5016"
+      },
+      {
+        "name"               : "server17",
+        "script"             : "server.js",
+        "args"               : "-s --port=5017"
+      },
+      {
+        "name"               : "server18",
+        "script"             : "server.js",
+        "args"               : "-s --port=5018"
+      },
+      {
+        "name"               : "server19",
+        "script"             : "server.js",
+        "args"               : "-s --port=5019"
+      },
+      {
+        "name"               : "server20",
+        "script"             : "server.js",
+        "args"               : "-s --port=5020"
       }
+
     ]
   }
                                                                                                                                                   65,1          Bot
