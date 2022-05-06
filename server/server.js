@@ -114,7 +114,7 @@ let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 
 let elasticSocketPort = (parseInt(PORT) % 2) + 6100;
 elasticSocketPort = elasticSocketPort.toString();
-let elasticSocketIO = io(`${ElasticServer}:${elasticSocketPort}`);
+let elasticSocketIO = io(`http://${ElasticServer}:${elasticSocketPort}`);
 elasticSocketIO.on("connect", () => {
     console.log("connected to elastic socket.");
 });
