@@ -27,11 +27,11 @@ exports.adduser = (req, res) => {
 			 	</ul>
 			 	<h3>Message</h3>
 			 	<a href="
-			 	http://kylerim.cse356.compas.cs.stonybrook.edu/users/verify?key=${randomKey}">
-			 	http://kylerim.cse356.compas.cs.stonybrook.edu/users/verify?key=${randomKey} </a>
+			 	https://kylerim.cse356.compas.cs.stonybrook.edu/users/verify?key=${randomKey}">
+			 	https://kylerim.cse356.compas.cs.stonybrook.edu/users/verify?key=${randomKey} </a>
 			 `;
             console.log(
-                "http://kylerim.cse356.compas.cs.stonybrook.edu/users/verify?key=" +
+                "https://kylerim.cse356.compas.cs.stonybrook.edu/users/verify?key=" +
                     randomKey
             );
             if (IS_PRODUCTION_MODE) {
