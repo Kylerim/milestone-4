@@ -116,6 +116,9 @@ let elasticWebSocketServer = `ws://${ElasticServer}:${elasticSocketPort}`;
 
 const socket = new WebSocket(websocketServerDynamic);
 const elasticWS = new WebSocket(elasticWebSocketServer); // 6100~
+elasticWS.on("connect", function (socket) {
+    console.log("Connected to ", elasticWebSocketServer);
+});
 
 const connection = new ShareDB.Connection(socket);
 
