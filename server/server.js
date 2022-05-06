@@ -534,7 +534,7 @@ async function createDoc(request, response) {
     //adding document to index
 
     // await createIndex(docid, name, "");
-    elasticWS.send(JSON.stringify(["create", docid, name, ""]));
+    elasticWS.send(JSON.stringify(["createIndex", docid, name, ""]));
 
     doc.fetch(function (err) {
         response.setHeader("X-CSE356", GROUP_ID);
