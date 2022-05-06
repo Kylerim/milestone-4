@@ -378,7 +378,7 @@ function updateOpsQueue(request, response) {
     // let doc = connection.get("documents", docId);
     let content = request.body.op;
     let version = request.body.version;
-    let localDoc = docSessions.get(docId);
+    let localDoc = docSessions.get(docId).doc;
     // let remaining = 0;
     // if (docSessions.has(docId)) {
     //     remaining = docSessions.get(docId).queue.length;
