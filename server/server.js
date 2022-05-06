@@ -236,7 +236,7 @@ function eventsHandler(request, response) {
             // elasticWS.send(
             //     JSON.stringify(["updateIndex", docid, doc.data.ops])
             // );
-            elasticSocketIO.emit("updateIndex", docid, doc.data.ops);
+            elasticSocketIO.emit("updateIndex", docId, doc.data.ops);
         }
         sendPresenceEventsToAll(request, docId, clientId, null);
         clients.delete(newClient);
