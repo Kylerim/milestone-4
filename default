@@ -1,0 +1,268 @@
+# /etc/nginx/sites-enabed/default config file
+
+
+
+#proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=custom_cache:10m inactive=60m max_size=10g;
+
+
+
+map $request_uri $hash_key {
+        ~/doc/op/(?<docId>([\S\s]*))/() $docId;
+        ~/doc/connect/(?<docId>([\S\s]*))/() $docId;
+        ~/doc/presence/(?<docId>([\S\s]*))/() $docId;
+        ~/doc/edit/(?<docId>([\S\s]*)) $docId;
+        ~/doc/get/(?<docId>([\S\s]*))/() $docId;
+        #~*/doc/op/(?<docId>([A-Za-z0-9\-]*))/[A-Za-z0-9\-]* $docId;
+        #~*/doc/connect/(?<docId>([A-Za-z0-9\-]*))/[A-Za-z0-9\-]* $docId;
+        #~*/doc/presence/(?<docId>([A-Za-z0-9\-]*))/[A-Za-z0-9\-]* $docId;
+        #~*/doc/edit/(?<docId>([A-Za-z0-9\-]*)) $docId;
+        #~*/doc/get/(?<docId>([A-Za-z0-9\-]*))/([A-Za-z0-9\-]*) $docId;
+        #default $request_uri;
+}
+
+
+
+upstream ops {
+    #keepalive_timeout 20s;
+    #keepalive_requests 10000;
+    #queue 100000 timeout=60;
+
+    hash $hash_key; #consistent;
+    server 127.0.0.1:5001;
+    server 127.0.0.1:5002;
+    server 127.0.0.1:5003;
+    server 127.0.0.1:5004;
+    server 127.0.0.1:5005;
+    server 127.0.0.1:5006;
+    server 127.0.0.1:5007;
+    server 127.0.0.1:5008;
+    server 127.0.0.1:5009;
+    server 127.0.0.1:5010;
+    server 127.0.0.1:5011;
+    server 127.0.0.1:5012;
+    server 127.0.0.1:5013;
+    server 127.0.0.1:5014;
+    server 127.0.0.1:5015;
+    server 127.0.0.1:5016;
+    server 127.0.0.1:5017;
+    server 127.0.0.1:5018;
+   # server 127.0.0.1:5019;
+   # server 127.0.0.1:5020;
+   # server 127.0.0.1:5021;
+   # server 127.0.0.1:5022;
+   # server 127.0.0.1:5023;
+   # server 127.0.0.1:5024;
+}
+
+
+upstream search {
+    #server 127.0.0.1:6001;
+    #server 127.0.0.1:6002;
+    #server 127.0.0.1:6003;
+    # Elastic Server
+    server 209.94.59.103:6001;
+    server 209.94.59.103:6002;
+    server 209.94.59.103:6003;
+}
+
+upstream general {
+    server 127.0.0.1:5001;
+    server 127.0.0.1:5002;
+    server 127.0.0.1:5003;
+    server 127.0.0.1:5004;
+    server 127.0.0.1:5005;
+    server 127.0.0.1:5006;
+    server 127.0.0.1:5007;
+    server 127.0.0.1:5008;
+    server 127.0.0.1:5009;
+    server 127.0.0.1:5010;
+    server 127.0.0.1:5011;
+    server 127.0.0.1:5012;
+    server 127.0.0.1:5013;
+    server 127.0.0.1:5014;
+    server 127.0.0.1:5015;
+    server 127.0.0.1:5016;
+   server 127.0.0.1:5017;
+    server 127.0.0.1:5018;
+#    server 127.0.0.1:5019;
+#    server 127.0.0.1:5020;
+#   server 127.0.0.1:5021;
+  #  server 127.0.0.1:5022;
+  #  server 127.0.0.1:5023;
+  #  server 127.0.0.1:5024;
+}
+          
+
+
+# for http
+server {
+    listen 80;
+    listen [::]:80;
+
+
+    root /home/milestone-4/server;
+    access_log /home/milestone-4/server/access-request-uri.log;
+    server_name _;
+    #keepalive_timeout 100s;
+
+ location /doc {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        proxy_pass http://ops;
+        proxy_read_timeout 10m;
+        proxy_http_version 1.1;
+        #chunked_transfer_encoding off;
+        #proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection '';
+        proxy_set_header Host $host;
+
+        proxy_buffer_size 8k;
+        proxy_busy_buffers_size 8k;
+        proxy_buffers 32 8k;
+        proxy_buffering off;
+        #proxy_buffer_size 16k;
+
+        proxy_cache_bypass $http_upgrade;
+
+        #proxy_redirect off;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header x-forwarded-host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-NginX-Proxy true;
+        #Added
+        #proxy_max_temp_file_size 4096m;
+
+    }
+
+ location / {
+                proxy_pass http://general;
+                http2_push_preload on;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_cache_bypass $http_upgrade;
+                proxy_redirect off;
+                proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+                proxy_set_header x-forwarded-host $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-NginX-Proxy true;
+
+               # cache
+               # proxy_cache custom_cache;
+               # proxy_cache_valid any 10m;
+               # add_header X-Proxy-Cache $upstream_cache_status;
+
+    }
+
+
+   location /index {
+                proxy_pass http://search;
+                http2_push_preload on;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_cache_bypass $http_upgrade;
+                proxy_redirect off;
+                proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+                proxy_set_header x-forwarded-host $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-NginX-Proxy true;
+
+                # cache
+               # proxy_cache custom_cache;
+               # proxy_cache_valid any 10m;
+               # add_header X-Proxy-Cache $upstream_cache_status;
+
+}
+
+
+}
+
+# for https
+ server {
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    root /home/milestone-4/server;
+    access_log /home/milestone-4/server/access-request-uri.log;
+
+    # Add index.php to the list if you are using PHP
+    server_name _;
+
+    ssl_certificate /etc/letsencrypt/live/kylerim.cse356.compas.cs.stonybrook.edu/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/kylerim.cse356.compas.cs.stonybrook.edu/privkey.pem;
+
+
+    location /doc {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        proxy_pass http://ops;
+        proxy_read_timeout 10m;
+        proxy_http_version 1.1;
+        #chunked_transfer_encoding off;
+        #proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection '';
+        proxy_set_header Host $host;
+
+        proxy_buffer_size 8k;
+        proxy_busy_buffers_size 8k;
+        proxy_buffers 32 8k;
+        proxy_buffering off;
+        #proxy_buffer_size 16k;
+
+        proxy_cache_bypass $http_upgrade;
+
+
+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header x-forwarded-host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-NginX-Proxy true;
+        #Added
+        #proxy_max_temp_file_size 4096m;
+
+    }
+
+
+ location / {
+                proxy_pass http://general;
+                http2_push_preload on;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_cache_bypass $http_upgrade;
+                proxy_redirect off;
+                proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+                proxy_set_header x-forwarded-host $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-NginX-Proxy true;
+
+               # cache
+               # proxy_cache custom_cache;
+               # proxy_cache_valid any 10m;
+               # add_header X-Proxy-Cache $upstream_cache_status;
+
+    }
+
+   location /index {
+                proxy_pass http://search;
+                http2_push_preload on;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_cache_bypass $http_upgrade;
+                proxy_redirect off;
+                proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+                proxy_set_header x-forwarded-host $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header X-NginX-Proxy true;
+
+                # cache
+               # proxy_cache custom_cache;
+               # proxy_cache_valid any 10m;
+               # add_header X-Proxy-Cache $upstream_cache_status;
+
+}
+
+ }
+                                                                                                                        278,1         Bot

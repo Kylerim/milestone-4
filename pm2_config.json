@@ -1,0 +1,67 @@
+{
+    "apps" :[
+  
+      {
+        "name"               : "server1",
+        "script"             : "server.js",
+        "args"               : "-s --port=5001"
+      },
+      {
+        "name"               : "server2",
+        "script"             : "server.js",
+            "args"                           : "-s --port=5002"
+      },
+      {
+        "name"               : "server3",
+        "script"             : "server.js",
+            "args"                           : "-s --port=5003"
+      },
+      {
+        "name"               : "server4",
+        "script"             : "server.js",
+            "args"                           : "-s --port=5004"
+      },
+      {
+        "name"               : "server5",
+        "script"             : "server.js",
+            "args"                           : "-s --port=5005"
+      },
+      {
+        "name"               : "server6",
+        "script"             : "server.js",
+            "args"                           : "-s --port=5006"
+      },
+      {
+        "name"               : "server7",
+        "script"             : "server.js",
+        "args"               : "-s --port=5007"
+      },
+           {
+        "name"               : "server8",
+        "script"             : "server.js",
+        "args"               : "-s --port=5008"
+      },
+            {
+        "name"               : "server9",
+        "script"             : "server.js",
+        "args"               : "-s --port=5009"
+      },
+            {
+        "name"               : "server10",
+        "script"             : "server.js",
+        "args"               : "-s --port=5010"
+      },
+             {
+        "name"               : "server11",
+        "script"             : "server.js",
+        "args"               : "-s --port=5011"
+      },
+             {
+        "name"               : "server12",
+        "script"             : "server.js",
+        "args"               : "-s --port=5012"
+      }
+    ]
+  }
+                                                                                                                                                  65,1          Bot
+    
