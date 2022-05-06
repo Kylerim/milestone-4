@@ -140,9 +140,7 @@ function sendBulkUpdate() {
     });
 
     // updateBulk(toUpdate);
-    elasticWS.on("connection", function (ws) {
-        elasticWS.send(JSON.stringify(["updateBulk", toUpdate]));
-    });
+    elasticWS.send(JSON.stringify(["updateBulk", toUpdate]));
 }
 
 setInterval(sendBulkUpdate, 8000);
@@ -229,11 +227,9 @@ function eventsHandler(request, response) {
     request.on("close", () => {
         if (doc && doc.data) {
             // updateIndex(docId, doc.data.ops);
-            elasticWS.on("connection", function (ws) {
-                elasticWS.send(
-                    JSON.stringify(["updateIndex", docid, doc.data.ops])
-                );
-            });
+            elasticWS.send(
+                JSON.stringify(["updateIndex", docid, doc.data.ops])
+            );
         }
         sendPresenceEventsToAll(request, docId, clientId, null);
         clients.delete(newClient);
@@ -538,10 +534,7 @@ async function createDoc(request, response) {
     //adding document to index
 
     // await createIndex(docid, name, "");
-    elasticWS.on("connection", function (ws) {
-        elasticWS.send(JSON.stringify(["create", docid, name, ""]));
-        console.log("to elastic web socket sent");
-    });
+    elasticWS.send(JSON.stringify(["create", docid, name, ""]));
 
     doc.fetch(function (err) {
         response.setHeader("X-CSE356", GROUP_ID);
@@ -576,9 +569,7 @@ async function deleteDoc(request, response) {
     // if (doc === undefined)
 
     // await deleteIndex(docId);
-    elasticWS.on("connection", function (ws) {
-        elasticWS.send(JSON.stringify(["deleteIndex", docid]));
-    });
+    elasticWS.send(JSON.stringify(["deleteIndex", docid]));
     Document.findOne({ _id: docId }).exec((err, document) => {
         if (err) {
             response.json({
