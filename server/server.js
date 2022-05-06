@@ -149,7 +149,7 @@ function sendBulkUpdate() {
     // elasticSocketIO.emit("updateBulk", toUpdate);
 }
 
-setInterval(sendBulkUpdate, 5000);
+setInterval(sendBulkUpdate, 8000);
 //EVENT STREAM
 function eventsHandler(request, response) {
     const headers = {
