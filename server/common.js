@@ -8,3 +8,4 @@ exports.websocketServer = "ws://localhost:5555";
 exports.MongoDBServer = "194.113.75.125";
 exports.shareDBServer = "209.151.155.182";
 exports.ELASTIC_PORT = 6001;
+exports.ElasticServer = "209.95.59.103";

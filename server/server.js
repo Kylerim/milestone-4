@@ -27,6 +27,7 @@ const {
     websocketServer,
     MongoDBServer,
     shareDBServer,
+    ElasticServer,
 } = require("./common.js");
 
 if (args.s) {
@@ -109,7 +110,13 @@ let sharedbServerPort = (parseInt(PORT) % 12) + 5555;
 sharedbServerPort = sharedbServerPort.toString();
 let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 
+let elasticSocketPort = (parseInt(PORT) % 2) + 6100;
+elasticSocketPort = elasticSocketPort.toString();
+let elasticWebSocketServer = `ws://${elasticServer}:${elasticSocketPort}`;
+
 const socket = new WebSocket(websocketServerDynamic);
+const elasticWS = new WebSocket(elasticWebSocketServer); // 6101~
+
 const connection = new ShareDB.Connection(socket);
 
 let docSessions = new Map();
@@ -131,7 +138,11 @@ function sendBulkUpdate() {
             docSession.isTouched = false;
         }
     });
-    updateBulk(toUpdate);
+
+    // updateBulk(toUpdate);
+    elasticWS.on("connection", function (ws) {
+        elasticWS.send(JSON.stringify(["updateBulk", toUpdate]));
+    });
 }
 
 setInterval(sendBulkUpdate, 8000);
@@ -217,7 +228,12 @@ function eventsHandler(request, response) {
     // });
     request.on("close", () => {
         if (doc && doc.data) {
-            updateIndex(docId, doc.data.ops);
+            // updateIndex(docId, doc.data.ops);
+            elasticWS.on("connection", function (ws) {
+                elasticWS.send(
+                    JSON.stringify(["updateIndex", docid, doc.data.ops])
+                );
+            });
         }
         sendPresenceEventsToAll(request, docId, clientId, null);
         clients.delete(newClient);
@@ -520,7 +536,12 @@ async function createDoc(request, response) {
     console.log("docId: " + docid);
     const doc = connection.get("documents", docid);
     //adding document to index
-    await createIndex(docid, name, "");
+
+    // await createIndex(docid, name, "");
+    elasticWS.on("connection", function (ws) {
+        elasticWS.send(JSON.stringify(["create", docid, name, ""]));
+    });
+
     doc.fetch(function (err) {
         response.setHeader("X-CSE356", GROUP_ID);
 
@@ -552,7 +573,11 @@ async function deleteDoc(request, response) {
     console.log("deleting docId: " + docId);
     // let doc = docSessions.get(docId).doc;
     // if (doc === undefined)
-    await deleteIndex(docId);
+
+    // await deleteIndex(docId);
+    elasticWS.on("connection", function (ws) {
+        elasticWS.send(JSON.stringify(["deleteIndex", docid]));
+    });
     Document.findOne({ _id: docId }).exec((err, document) => {
         if (err) {
             response.json({
