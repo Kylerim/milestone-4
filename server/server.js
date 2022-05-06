@@ -115,7 +115,7 @@ elasticSocketPort = elasticSocketPort.toString();
 let elasticWebSocketServer = `ws://${ElasticServer}:${elasticSocketPort}`;
 
 const socket = new WebSocket(websocketServerDynamic);
-const elasticWS = new WebSocket(elasticWebSocketServer); // 6101~
+const elasticWS = new WebSocket(elasticWebSocketServer); // 6100~
 
 const connection = new ShareDB.Connection(socket);
 
@@ -540,6 +540,7 @@ async function createDoc(request, response) {
     // await createIndex(docid, name, "");
     elasticWS.on("connection", function (ws) {
         elasticWS.send(JSON.stringify(["create", docid, name, ""]));
+        console.log("to elastic web socket sent");
     });
 
     doc.fetch(function (err) {
