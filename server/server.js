@@ -112,12 +112,12 @@ let sharedbServerPort = (parseInt(PORT) % 16) + 5555;
 sharedbServerPort = sharedbServerPort.toString();
 let websocketServerDynamic = `ws://${shareDBServer}:${sharedbServerPort}`;
 
-let elasticSocketPort = (parseInt(PORT) % 16) + 6100;
-elasticSocketPort = elasticSocketPort.toString();
-let elasticSocketIO = io(`http://${ElasticServer}:${elasticSocketPort}`);
-elasticSocketIO.on("connect", () => {
-    console.log("connected to elastic socket.");
-});
+// let elasticSocketPort = (parseInt(PORT) % 16) + 6100;
+// elasticSocketPort = elasticSocketPort.toString();
+// let elasticSocketIO = io(`http://${ElasticServer}:${elasticSocketPort}`);
+// elasticSocketIO.on("connect", () => {
+//     console.log("connected to elastic socket.");
+// });
 
 const socket = new WebSocket(websocketServerDynamic);
 // const elasticWS = new WebSocket(elasticWebSocketServer); // 6100~
@@ -144,9 +144,9 @@ function sendBulkUpdate() {
         }
     });
 
-    // updateBulk(toUpdate);
+    updateBulk(toUpdate);
     // elasticWS.send(JSON.stringify(["updateBulk", toUpdate]));
-    elasticSocketIO.emit("updateBulk", toUpdate);
+    // elasticSocketIO.emit("updateBulk", toUpdate);
 }
 
 setInterval(sendBulkUpdate, 8000);
@@ -232,11 +232,11 @@ function eventsHandler(request, response) {
     // });
     request.on("close", () => {
         if (doc && doc.data) {
-            // updateIndex(docId, doc.data.ops);
+            updateIndex(docId, doc.data.ops);
             // elasticWS.send(
             //     JSON.stringify(["updateIndex", docid, doc.data.ops])
             // );
-            elasticSocketIO.emit("updateIndex", docId, doc.data.ops);
+            // elasticSocketIO.emit("updateIndex", docId, doc.data.ops);
         }
         sendPresenceEventsToAll(request, docId, clientId, null);
         clients.delete(newClient);
@@ -543,7 +543,8 @@ async function createDoc(request, response) {
     // await createIndex(docid, name, "");
 
     // elasticWS.send(JSON.stringify(["createIndex", docid, name, ""]));
-    elasticSocketIO.emit("createIndex", docid, name, "");
+    // elasticSocketIO.emit("createIndex", docid, name, "");
+    createIndex(docid, name, "");
 
     doc.fetch(function (err) {
         response.setHeader("X-CSE356", GROUP_ID);
@@ -578,8 +579,9 @@ async function deleteDoc(request, response) {
     // if (doc === undefined)
 
     // await deleteIndex(docId);
-    // elasticWS.send(JSON.stringify(["deleteIndex", docid]));
-    elasticSocketIO.emit("deleteIndex", docid);
+    // elasticWS.send(JSON.stringify(["deleteIndex", docId]));
+    // elasticSocketIO.emit("deleteIndex", docId);
+    deleteIndex(docId);
 
     Document.findOne({ _id: docId }).exec((err, document) => {
         if (err) {
