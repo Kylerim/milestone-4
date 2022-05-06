@@ -2,7 +2,7 @@ const IS_PRODUCTION_MODE = true;
 // make above true for deploying
 
 export const backendURL = IS_PRODUCTION_MODE
-    ? "http://kylerim.cse356.compas.cs.stonybrook.edu"
+    ? "https://kylerim.cse356.compas.cs.stonybrook.edu"
     : "http://localhost:5001";
 export const endpointLogIn = backendURL + "/users/login";
 export const endpointLogOut = backendURL + "/users/logout";

@@ -12,7 +12,10 @@ function Home() {
     const [docList, setDocList] = useState([]);
     const [docName, setDocName] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const [searched, setSearched] = useState("");
+
     const [suggestQuery, setSuggestQuery] = useState("");
+    const [suggested, setSuggested] = useState("");
 
     const fetchdocList = async () => {
         console.log("Fetching doc list...");
@@ -83,6 +86,7 @@ function Home() {
         });
         const data = await response.json();
         console.log("HandleSearchRequest for: ", searchQuery, data);
+        setSearched(JSON.stringify(data) || "");
     };
 
     const handleSuggestRequest = async () => {
@@ -96,6 +100,7 @@ function Home() {
         });
         const data = await response.json();
         console.log("HandleSuggestRequest for: ", suggestQuery, data);
+        setSuggested(JSON.stringify(data) || "");
     };
 
     useEffect(() => {
@@ -136,6 +141,21 @@ function Home() {
             >
                 Suggest (Autocomplete)
             </button>
+
+            <br></br>
+            <button
+                onClick={() => {
+                    setSearched("");
+                    setSuggested("");
+                }}
+            >
+                clear results
+            </button>
+            <p>{searched}</p>
+            <p>{suggested}</p>
+
+            <br></br>
+            <br></br>
 
             <br></br>
             <br></br>
